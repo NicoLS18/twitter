@@ -2,5 +2,13 @@
 {% block concent %}
 <h2>Home Page</h2>
 
-<p>username: {{username}}</p>
+<img src="/static/logo.svg" alt="Twitter Clone Logo">
+
+{% for msg in messages %}
+<div>
+    <p><strong>{{ msg.username }}</strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}</p>
+    <p>{{ msg.message }}</p>
+    <hr>
+</div>
+{% endfor %}
 {% endblock %}
