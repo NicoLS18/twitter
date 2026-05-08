@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import hashlib
@@ -172,5 +172,23 @@ async def create_user_post(
     return response
 
 
+@app.get('/messages.json')
+async def messages_json():
+    con = sqlite3.connect('twitter_clone.db')
+    cur = con.cursor()
+    cur.execute("""
+        SELECT messages.message, messages.created_at, users.username
+        FROM messages
+        JOIN users ON messages.sender_id = users.id
+        ORDER BY messages.created_at DESC
+    """)
+    messages = [
+        {'message': row[0], 'created_at': row[1], 'username': row[2]}
+        for row in cur.fetchall()
+    ]
+    con.close()
+    return JSONResponse(content=messages)
+
+
 if __name__ == '__main__':
-    uvicorn.run("main:app", host='127.0.0.1', port=8080, reload=True)
+    uvicorn.run("main:app", host='0.0.0.0', port=8080, reload=True)

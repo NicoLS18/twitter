@@ -6,7 +6,8 @@
 
 {% for msg in messages %}
 <div>
-    <p><strong>{{ msg.username }}</strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}</p>
+    <img src="https://robohash.org/{{ msg.username }}" width="40" style="vertical-align:middle; margin-right:8px;">
+    <strong>{{ msg.username }}</strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}
     <p>{{ msg.message }}</p>
     <hr>
 </div>
