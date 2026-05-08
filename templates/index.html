@@ -4,12 +4,22 @@
 
 <img src="/static/logo.svg" alt="Twitter Clone Logo">
 
+<form method="get" action="/">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search messages...">
+    <button type="submit">Search</button>
+    {% if q %}<a href="/">Clear</a>{% endif %}
+</form>
+
 {% for msg in messages %}
 <div>
     <img src="https://robohash.org/{{ msg.username }}" width="40" style="vertical-align:middle; margin-right:8px;">
-    <strong>{{ msg.username }}</strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}
+    <strong><a href="/user/{{ msg.username }}">{{ msg.username }}</a></strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}
     <p>{{ msg.message }}</p>
-    <hr>
+    {% if msg.username == username %}
+    <form method="post" action="/delete_message/{{ msg.id }}" style="display:inline;">
+        <button type="submit" onclick="return confirm('Delete this message?')">Delete</button>
+    </form>
+    {% endif %}
 </div>
 {% endfor %}
 {% endblock %}

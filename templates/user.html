@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block concent %}
+<h2>
+    <img src="https://robohash.org/{{ profile_username }}" width="60" style="vertical-align:middle; margin-right:10px;">
+    {{ profile_username }}{% if profile_age %} (age {{ profile_age }}){% endif %}
+</h2>
+
+<p>{{ messages|length }} message{{ 's' if messages|length != 1 else '' }}</p>
+
+{% for msg in messages %}
+<div>
+    <p style="color:#888; font-size:0.9em;">{{ msg.created_at }}</p>
+    <p>{{ msg.message }}</p>
+    {% if msg.username == username %}
+    <form method="post" action="/delete_message/{{ msg.id }}" style="display:inline;">
+        <button type="submit" onclick="return confirm('Delete this message?')">Delete</button>
+    </form>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}
