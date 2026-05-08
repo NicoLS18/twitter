@@ -3,8 +3,12 @@
 Create a database for the Twitter project.
 '''
 
-# sqlite3 is built in python3, no need to pip install
+import hashlib
 import sqlite3
+
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
 
 # process command line arguments
 import argparse
@@ -29,14 +33,14 @@ cur.execute(sql)     # cur.execute() actually runs the SQL code
 con.commit()         # "commit" means "save" in SQL terminology; not always required, but never wrong
 
 # insert some dummy data
-cur.execute("insert into users (username, password, age) values ('Trump', 'Trump', 78);")
-cur.execute('insert into users (username, password, age) values (\'Biden\', \'Biden\', 81);')
-cur.execute('''insert into users (username, password, age) values ('Evan', 'correct horse battery staple', 7);''')
-cur.execute('''insert into users (username, password, age) values ('Isaac', 'soccer', 4);''')
-cur.execute('''insert into users (username, password, age) values ('Aaron', 'guaguagua', 3);''')
-cur.execute('''insert into users (username, password, age) values ('Aurelia', '', 1);''')
-cur.execute('''insert into users (username, password, age) values ('Mike', '524euTjrWm6uK2C5iw8mC6aNgX1JI78o', 35);''')
-cur.execute('''insert into users (username, password) values ('Kristen', 'Possible-Rich-Absolute-Battle');''')
+cur.execute("insert into users (username, password, age) values ('Trump', ?, 78);", (hash_password('Trump'),))
+cur.execute("insert into users (username, password, age) values ('Biden', ?, 81);", (hash_password('Biden'),))
+cur.execute("insert into users (username, password, age) values ('Evan', ?, 7);", (hash_password('correct horse battery staple'),))
+cur.execute("insert into users (username, password, age) values ('Isaac', ?, 4);", (hash_password('soccer'),))
+cur.execute("insert into users (username, password, age) values ('Aaron', ?, 3);", (hash_password('guaguagua'),))
+cur.execute("insert into users (username, password, age) values ('Aurelia', ?, 1);", (hash_password(''),))
+cur.execute("insert into users (username, password, age) values ('Mike', ?, 35);", (hash_password('524euTjrWm6uK2C5iw8mC6aNgX1JI78o'),))
+cur.execute("insert into users (username, password) values ('Kristen', ?);", (hash_password('Possible-Rich-Absolute-Battle'),))
 con.commit()
 
 # create the messages table

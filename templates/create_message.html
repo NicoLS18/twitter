@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
 {% block concent %}
 <h2>Create Message</h2>
+
+<form method="post" action="/create_message">
+    <label>Message:<br>
+        <textarea name="message" rows="4" cols="50" required></textarea>
+    </label>
+    <br><br>
+    <button type="submit">Post</button>
+</form>
 {% endblock %}
