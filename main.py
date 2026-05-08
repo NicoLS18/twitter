@@ -19,33 +19,49 @@ def get_username(request: Request):
     return request.cookies.get('username')
 
 
+PAGE_SIZE = 50
+
+
 @app.get('/', response_class=HTMLResponse)
-async def index(request: Request, q: str = None):
+async def index(request: Request, q: str = None, page: int = 1):
     username = get_username(request)
     is_logged_in = username is not None
+    offset = (page - 1) * PAGE_SIZE
 
     con = sqlite3.connect('twitter_clone.db')
     cur = con.cursor()
     if q:
+        cur.execute("""
+            SELECT COUNT(*) FROM messages
+            JOIN users ON messages.sender_id = users.id
+            WHERE messages.message LIKE ?
+        """, (f'%{q}%',))
+        total = cur.fetchone()[0]
         cur.execute("""
             SELECT messages.id, messages.message, messages.created_at, users.username, users.age
             FROM messages
             JOIN users ON messages.sender_id = users.id
             WHERE messages.message LIKE ?
             ORDER BY messages.created_at DESC
-        """, (f'%{q}%',))
+            LIMIT ? OFFSET ?
+        """, (f'%{q}%', PAGE_SIZE, offset))
     else:
+        cur.execute("SELECT COUNT(*) FROM messages")
+        total = cur.fetchone()[0]
         cur.execute("""
             SELECT messages.id, messages.message, messages.created_at, users.username, users.age
             FROM messages
             JOIN users ON messages.sender_id = users.id
             ORDER BY messages.created_at DESC
-        """)
+            LIMIT ? OFFSET ?
+        """, (PAGE_SIZE, offset))
     messages = [
         {'id': row[0], 'message': row[1], 'created_at': row[2], 'username': row[3], 'age': row[4]}
         for row in cur.fetchall()
     ]
     con.close()
+
+    total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
 
     return templates.TemplateResponse(
         request=request,
@@ -55,6 +71,8 @@ async def index(request: Request, q: str = None):
             'username': username,
             'messages': messages,
             'q': q or '',
+            'page': page,
+            'total_pages': total_pages,
         }
     )
 

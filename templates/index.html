@@ -10,6 +10,8 @@
     {% if q %}<a href="/">Clear</a>{% endif %}
 </form>
 
+<p>Page {{ page }} of {{ total_pages }}</p>
+
 {% for msg in messages %}
 <div>
     <img src="https://robohash.org/{{ msg.username }}" width="40" style="vertical-align:middle; margin-right:8px;">
@@ -22,4 +24,13 @@
     {% endif %}
 </div>
 {% endfor %}
+
+<div style="display:flex; gap:16px; margin-top:12px;">
+    {% if page > 1 %}
+    <a href="/?page={{ page - 1 }}&q={{ q }}">&#8592; Previous</a>
+    {% endif %}
+    {% if page < total_pages %}
+    <a href="/?page={{ page + 1 }}&q={{ q }}">Next &#8594;</a>
+    {% endif %}
+</div>
 {% endblock %}
