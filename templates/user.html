@@ -5,6 +5,18 @@
     {{ profile_username }}{% if profile_age %} (age {{ profile_age }}){% endif %}
 </h2>
 
+{% if profile_bio %}
+<p>{{ profile_bio }}</p>
+{% endif %}
+
+{% if username == profile_username %}
+<form method="post" action="/user/{{ profile_username }}/edit_bio">
+    <textarea name="bio" rows="3" style="width:100%;" placeholder="Write something about yourself...">{{ profile_bio }}</textarea>
+    <br>
+    <button type="submit">Save Bio</button>
+</form>
+{% endif %}
+
 <p>{{ messages|length }} message{{ 's' if messages|length != 1 else '' }}</p>
 
 {% for msg in messages %}

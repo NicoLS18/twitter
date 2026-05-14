@@ -236,7 +236,7 @@ async def user_profile(request: Request, profile_username: str):
 
     con = sqlite3.connect('twitter_clone.db')
     cur = con.cursor()
-    cur.execute('SELECT id, age FROM users WHERE username = ?', (profile_username,))
+    cur.execute('SELECT id, age, bio FROM users WHERE username = ?', (profile_username,))
     user = cur.fetchone()
     if user is None:
         con.close()
@@ -263,9 +263,25 @@ async def user_profile(request: Request, profile_username: str):
             'username': username,
             'profile_username': profile_username,
             'profile_age': user[1],
+            'profile_bio': user[2],
             'messages': messages,
         }
     )
+
+
+@app.post('/user/{profile_username}/edit_bio')
+async def edit_bio(request: Request, profile_username: str, bio: str = Form(...)):
+    username = get_username(request)
+    if username != profile_username:
+        return RedirectResponse(url=f'/user/{profile_username}', status_code=303)
+
+    con = sqlite3.connect('twitter_clone.db')
+    cur = con.cursor()
+    cur.execute('UPDATE users SET bio = ? WHERE username = ?', (bio, username))
+    con.commit()
+    con.close()
+
+    return RedirectResponse(url=f'/user/{profile_username}', status_code=303)
 
 
 @app.get('/messages.json')

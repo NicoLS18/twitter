@@ -26,7 +26,8 @@ CREATE TABLE users (
     id INTEGER PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    age INTEGER
+    age INTEGER,
+    bio TEXT NOT NULL DEFAULT ''
 );
 '''
 cur.execute(sql)     # cur.execute() actually runs the SQL code
