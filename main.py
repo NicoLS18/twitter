@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory='templates')
 
 def urlize(text):
     escaped = str(escape(text))
-    linked = re.sub(r'(https?://[^\s<>"]+)', r'<a href="\1">\1</a>', escaped)
+    linked = re.sub(r'(https?://[^\s<>"]+)', r'<a href="\1" target="_blank" rel="noopener noreferrer">\1</a>', escaped)
     return Markup(linked)
 
 templates.env.filters['urlize'] = urlize
