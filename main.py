@@ -2,13 +2,23 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from markupsafe import Markup, escape
 import hashlib
+import re
 import sqlite3
 import uvicorn
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 templates = Jinja2Templates(directory='templates')
+
+
+def urlize(text):
+    escaped = str(escape(text))
+    linked = re.sub(r'(https?://[^\s<>"]+)', r'<a href="\1">\1</a>', escaped)
+    return Markup(linked)
+
+templates.env.filters['urlize'] = urlize
 
 
 def hash_password(password: str) -> str:

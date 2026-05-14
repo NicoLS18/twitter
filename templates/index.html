@@ -16,7 +16,7 @@
 <div>
     <img src="https://robohash.org/{{ msg.username }}" width="40" style="vertical-align:middle; margin-right:8px;">
     <strong><a href="/user/{{ msg.username }}">{{ msg.username }}</a></strong> (age {{ msg.age }}) &mdash; {{ msg.created_at }}
-    <p>{{ msg.message }}</p>
+    <p>{{ msg.message | urlize }}</p>
     {% if msg.username == username %}
     <form method="post" action="/delete_message/{{ msg.id }}" style="display:inline;">
         <button type="submit" onclick="return confirm('Delete this message?')">Delete</button>
